@@ -4,6 +4,10 @@ use App\Http\Controllers\Api\FoodCategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Api\Restaurant\RestaurantController;
+use App\Http\Controllers\Api\Restaurant\RestaurantBranchController;
+use App\Http\Controllers\Api\Restaurant\RestaurantTableController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,3 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('food-categories', FoodCategoryController::class);
+//restaurant
+Route::apiResource('restaurants', RestaurantController::class);
+Route::apiResource('restaurants_branch', RestaurantBranchController::class);
+Route::apiResource('restaurants_table', RestaurantTableController::class);

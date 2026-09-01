@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\RestaurantTable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RestaurantTableController extends Controller
 {
@@ -19,14 +20,19 @@ class RestaurantTableController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'branch_id' => 'required|exists:restaurant_branches,id',
+            'table_number' => 'required|string|max:50',
+            'capacity' => 'required|integer|min:1',
+            'status' => ['nullable', 'string', Rule::in(['available', 'occupied', 'reserved'])],
+        ]);
 
-        $model = RestaurantTable::create($validated);
+        $table = RestaurantTable::create($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Created successfully',
-            'data' => $model,
+            'message' => 'Table created successfully',
+            'data' => $table,
         ], 201);
     }
 
@@ -42,17 +48,17 @@ class RestaurantTableController extends Controller
 
     public function update(Request $request, string $id): JsonResponse
     {
-        $model = RestaurantTable::findOrFail($id);
-
-        $validated = $request->validate([]);
-
-        $model->update($validated);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Updated successfully',
-            'data' => $model,
+       $validated = $request->validate([
+            'table_number' => 'sometimes|required|string|max:50',
+            'capacity' => 'sometimes|required|integer|min:1',
+            'status' => ['sometimes', 'required', 'string', Rule::in(['available', 'occupied', 'reserved'])],
         ]);
+
+        $table = RestaurantTable::findOrFail($id);
+
+        $table->update($validated);
+
+        return response()->json($table);
     }
 
     public function destroy(string $id): JsonResponse

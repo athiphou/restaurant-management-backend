@@ -19,14 +19,19 @@ class RestaurantBranchController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'restaurant_id' => 'required|exists:restaurants,id',
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+        ]);
 
-        $model = RestaurantBranch::create($validated);
+        $branch = RestaurantBranch::create($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Created successfully',
-            'data' => $model,
+            'message' => 'Branch created successfully',
+            'data' => $branch,
         ], 201);
     }
 
@@ -42,17 +47,17 @@ class RestaurantBranchController extends Controller
 
     public function update(Request $request, string $id): JsonResponse
     {
-        $model = RestaurantBranch::findOrFail($id);
-
-        $validated = $request->validate([]);
-
-        $model->update($validated);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Updated successfully',
-            'data' => $model,
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
         ]);
+
+        $branch = RestaurantBranch::findOrFail($id);
+
+        $branch->update($validated);
+
+        return response()->json($branch);
     }
 
     public function destroy(string $id): JsonResponse
