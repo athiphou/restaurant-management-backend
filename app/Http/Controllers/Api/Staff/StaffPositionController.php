@@ -19,15 +19,14 @@ class StaffPositionController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'title'=>'required|string|max:255',
+            'base_salary'=>'nullable|numeric|min:0',
+        ]);
+        $position = StaffPosition::create($validated);
 
-        $model = StaffPosition::create($validated);
+        return response()->json($position, 201);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Created successfully',
-            'data' => $model,
-        ], 201);
     }
 
     public function show(string $id): JsonResponse
@@ -42,17 +41,16 @@ class StaffPositionController extends Controller
 
     public function update(Request $request, string $id): JsonResponse
     {
-        $model = StaffPosition::findOrFail($id);
+        $staffPosition = StaffPosition::findOrFail($id);
 
-        $validated = $request->validate([]);
-
-        $model->update($validated);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Updated successfully',
-            'data' => $model,
+        $validated = $request->validate([
+            'title' => 'sometimes|string|max:255',
+            'base_salary' => 'nullable|numeric|min:0',
         ]);
+
+        $staffPosition->update($validated);
+
+        return response()->json($staffPosition);
     }
 
     public function destroy(string $id): JsonResponse

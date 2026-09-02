@@ -8,6 +8,9 @@ use App\Http\Controllers\Api\Restaurant\RestaurantController;
 use App\Http\Controllers\Api\Restaurant\RestaurantBranchController;
 use App\Http\Controllers\Api\Restaurant\RestaurantTableController;
 
+use App\Http\Controllers\Api\Staff\StaffPositionController;
+use App\Http\Controllers\Api\Staff\EmployeeController;
+use App\Http\Controllers\Api\Staff\DeliveryDriverController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,3 +31,7 @@ Route::apiResource('food-categories', FoodCategoryController::class);
 Route::apiResource('restaurants', RestaurantController::class);
 Route::apiResource('restaurants_branch', RestaurantBranchController::class);
 Route::apiResource('restaurants_table', RestaurantTableController::class);
+//staff
+Route::apiResource('staff', StaffPositionController::class);
+Route::apiResource('employees', EmployeeController::class);
+Route::apiResource('delivery-drivers', DeliveryDriverController::class);
