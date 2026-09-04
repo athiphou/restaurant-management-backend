@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('staff_positions', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->decimal('base_salary', 10, 2)->nullable();
             $table->timestamps();
         });
     }

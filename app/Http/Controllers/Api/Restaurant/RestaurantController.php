@@ -19,46 +19,51 @@ class RestaurantController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'address' => 'nullable|string',
+        ]);
 
-        $model = Restaurant::create($validated);
+        $restaurant = Restaurant::create($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Created successfully',
-            'data' => $model,
+            'message' => 'Restaurant created successfully',
+            'data' => $restaurant,
         ], 201);
     }
 
-    public function show(string $id): JsonResponse
+    public function show(Restaurant $restaurant): JsonResponse
     {
-        $model = Restaurant::findOrFail($id);
-
         return response()->json([
             'success' => true,
-            'data' => $model,
+            'data' => $restaurant,
         ]);
     }
 
-    public function update(Request $request, string $id): JsonResponse
+    public function update(Request $request, Restaurant $restaurant): JsonResponse
     {
-        $model = Restaurant::findOrFail($id);
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'address' => 'nullable|string',
+        ]);
 
-        $validated = $request->validate([]);
-
-        $model->update($validated);
+        $restaurant->update($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Updated successfully',
-            'data' => $model,
+            'data' => $restaurant,
         ]);
     }
 
-    public function destroy(string $id): JsonResponse
+    public function destroy(Restaurant $restaurant): JsonResponse
     {
-        $model = Restaurant::findOrFail($id);
-        $model->delete();
+        $restaurant->delete();
 
         return response()->json([
             'success' => true,

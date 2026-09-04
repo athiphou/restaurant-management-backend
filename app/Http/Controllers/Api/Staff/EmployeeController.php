@@ -19,15 +19,16 @@ class EmployeeController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'user_id'=>'required|exists:users,id',
+            'branch_id' => 'required|exists:restaurant_branches,id',
+            'position_id' => 'required|exists:staff_positions,id',
+            'hire_date' => 'required|date',
+            'salary' => 'required|numeric|min:0',
+        ]);
+        $employee = Employee::create($validated);
 
-        $model = Employee::create($validated);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Created successfully',
-            'data' => $model,
-        ], 201);
+        return response()->json($employee->load(['user', 'branch', 'position']), 201);
     }
 
     public function show(string $id): JsonResponse

@@ -1,18 +1,35 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+// Food
 use App\Http\Controllers\Api\FoodCategoryController;
 use App\Http\Controllers\Api\Menu\FoodController;
 use App\Http\Controllers\Api\Menu\FoodVariantController;
 use App\Http\Controllers\Api\Menu\FoodAddonController;
 use App\Http\Controllers\Api\Menu\FoodAddonItemController;
+
+// Customer
 use App\Http\Controllers\Api\Customer\CustomerController;
 use App\Http\Controllers\Api\Customer\CustomerAddressController;
+
+// Promotion
 use App\Http\Controllers\Api\Promotion\PromotionController;
+
+// Order
 use App\Http\Controllers\Api\Order\OrderController;
 use App\Http\Controllers\Api\Order\OrderItemController;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+// Restaurant
+use App\Http\Controllers\Api\Restaurant\RestaurantController;
+use App\Http\Controllers\Api\Restaurant\RestaurantBranchController;
+use App\Http\Controllers\Api\Restaurant\RestaurantTableController;
+
+// Staff
+use App\Http\Controllers\Api\Staff\StaffPositionController;
+use App\Http\Controllers\Api\Staff\EmployeeController;
+use App\Http\Controllers\Api\Staff\DeliveryDriverController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,5 +57,14 @@ Route::apiResource('promotions', PromotionController::class);
 
 // Order
 Route::apiResource('orders', OrderController::class);
-
 Route::apiResource('order-items', OrderItemController::class);
+
+// Restaurant
+Route::apiResource('restaurants', RestaurantController::class);
+Route::apiResource('restaurant-branches', RestaurantBranchController::class);
+Route::apiResource('restaurant-tables', RestaurantTableController::class);
+
+// Staff
+Route::apiResource('staff-positions', StaffPositionController::class);
+Route::apiResource('employees', EmployeeController::class);
+Route::apiResource('delivery-drivers', DeliveryDriverController::class);

@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('restaurant_branches', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('restaurant_id')->constrained('restaurants')->onDelete('cascade');
+            $table->string('name');
+            $table->string('phone')->nullable();
+            $table->text('address')->nullable();
             $table->timestamps();
         });
     }

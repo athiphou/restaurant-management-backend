@@ -13,26 +13,33 @@ class DeliveryDriverController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => DeliveryDriver::all(),
+            'data' => DeliveryDriver::with(['user', 'branch'])->get(),
         ]);
     }
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'branch_id' => 'required|exists:restaurant_branches,id',
+            'phone' => 'nullable|string|max:20',
+            'vehicle_type' => 'nullable|string|max:50',
+            'license_plate' => 'nullable|string|max:20',
+            'status' => 'sometimes|in:available,busy,offline',
+        ]);
 
         $model = DeliveryDriver::create($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Created successfully',
-            'data' => $model,
+            'data' => $model->load(['user', 'branch']),
         ], 201);
     }
 
     public function show(string $id): JsonResponse
     {
-        $model = DeliveryDriver::findOrFail($id);
+        $model = DeliveryDriver::with(['user', 'branch'])->findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -44,14 +51,21 @@ class DeliveryDriverController extends Controller
     {
         $model = DeliveryDriver::findOrFail($id);
 
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'user_id' => 'sometimes|exists:users,id',
+            'branch_id' => 'sometimes|exists:restaurant_branches,id',
+            'phone' => 'nullable|string|max:20',
+            'vehicle_type' => 'nullable|string|max:50',
+            'license_plate' => 'nullable|string|max:20',
+            'status' => 'sometimes|in:available,busy,offline',
+        ]);
 
         $model->update($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Updated successfully',
-            'data' => $model,
+            'data' => $model->load(['user', 'branch']),
         ]);
     }
 
