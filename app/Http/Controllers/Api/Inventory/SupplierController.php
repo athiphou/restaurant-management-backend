@@ -19,7 +19,12 @@ class SupplierController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'contact_name' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+        ]);
 
         $model = Supplier::create($validated);
 
@@ -44,7 +49,12 @@ class SupplierController extends Controller
     {
         $model = Supplier::findOrFail($id);
 
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'contact_name' => 'sometimes|required|string|max:255',
+            'phone' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|email|max:255',
+        ]);
 
         $model->update($validated);
 
