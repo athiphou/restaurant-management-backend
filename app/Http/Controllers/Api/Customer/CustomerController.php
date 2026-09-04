@@ -11,58 +11,68 @@ class CustomerController extends Controller
 {
     public function index(): JsonResponse
     {
+        $customers = Customer::with('orders')->get();
+
         return response()->json([
             'success' => true,
-            'data' => Customer::all(),
+            'data' => $customers,
         ]);
     }
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+        ]);
 
-        $model = Customer::create($validated);
+        $customer = Customer::create($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Created successfully',
-            'data' => $model,
+            'message' => 'Customer created successfully',
+            'data' => $customer,
         ], 201);
     }
 
     public function show(string $id): JsonResponse
     {
-        $model = Customer::findOrFail($id);
+        $customer = Customer::with('orders')->findOrFail($id);
 
         return response()->json([
             'success' => true,
-            'data' => $model,
+            'data' => $customer,
         ]);
     }
 
     public function update(Request $request, string $id): JsonResponse
     {
-        $model = Customer::findOrFail($id);
+        $customer = Customer::findOrFail($id);
 
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+        ]);
 
-        $model->update($validated);
+        $customer->update($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Updated successfully',
-            'data' => $model,
+            'message' => 'Customer updated successfully',
+            'data' => $customer,
         ]);
     }
 
     public function destroy(string $id): JsonResponse
     {
-        $model = Customer::findOrFail($id);
-        $model->delete();
+        $customer = Customer::findOrFail($id);
+        $customer->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Deleted successfully',
+            'message' => 'Customer deleted successfully',
         ]);
     }
 }

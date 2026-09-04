@@ -11,58 +11,74 @@ class FoodController extends Controller
 {
     public function index(): JsonResponse
     {
+        $foods = Food::with('category')->get();
+
         return response()->json([
             'success' => true,
-            'data' => Food::all(),
+            'data' => $foods,
         ]);
     }
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'category_id' => 'required|exists:food_categories,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'image' => 'nullable|string|max:500',
+            'is_available' => 'boolean',
+        ]);
 
-        $model = Food::create($validated);
+        $food = Food::create($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Created successfully',
-            'data' => $model,
+            'message' => 'Food created successfully',
+            'data' => $food->load('category'),
         ], 201);
     }
 
     public function show(string $id): JsonResponse
     {
-        $model = Food::findOrFail($id);
+        $food = Food::with('category')->findOrFail($id);
 
         return response()->json([
             'success' => true,
-            'data' => $model,
+            'data' => $food,
         ]);
     }
 
     public function update(Request $request, string $id): JsonResponse
     {
-        $model = Food::findOrFail($id);
+        $food = Food::findOrFail($id);
 
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'category_id' => 'required|exists:food_categories,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'image' => 'nullable|string|max:500',
+            'is_available' => 'boolean',
+        ]);
 
-        $model->update($validated);
+        $food->update($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Updated successfully',
-            'data' => $model,
+            'message' => 'Food updated successfully',
+            'data' => $food->load('category'),
         ]);
     }
 
     public function destroy(string $id): JsonResponse
     {
-        $model = Food::findOrFail($id);
-        $model->delete();
+        $food = Food::findOrFail($id);
+        $food->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Deleted successfully',
+            'message' => 'Food deleted successfully',
         ]);
     }
 }

@@ -11,58 +11,70 @@ class FoodVariantController extends Controller
 {
     public function index(): JsonResponse
     {
+        $variants = FoodVariant::with('food')->get();
+
         return response()->json([
             'success' => true,
-            'data' => FoodVariant::all(),
+            'data' => $variants,
         ]);
     }
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'food_id' => 'required|exists:foods,id',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'is_available' => 'boolean',
+        ]);
 
-        $model = FoodVariant::create($validated);
+        $variant = FoodVariant::create($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Created successfully',
-            'data' => $model,
+            'message' => 'Food variant created successfully',
+            'data' => $variant->load('food'),
         ], 201);
     }
 
     public function show(string $id): JsonResponse
     {
-        $model = FoodVariant::findOrFail($id);
+        $variant = FoodVariant::with('food')->findOrFail($id);
 
         return response()->json([
             'success' => true,
-            'data' => $model,
+            'data' => $variant,
         ]);
     }
 
     public function update(Request $request, string $id): JsonResponse
     {
-        $model = FoodVariant::findOrFail($id);
+        $variant = FoodVariant::findOrFail($id);
 
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'food_id' => 'required|exists:foods,id',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'is_available' => 'boolean',
+        ]);
 
-        $model->update($validated);
+        $variant->update($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Updated successfully',
-            'data' => $model,
+            'message' => 'Food variant updated successfully',
+            'data' => $variant->load('food'),
         ]);
     }
 
     public function destroy(string $id): JsonResponse
     {
-        $model = FoodVariant::findOrFail($id);
-        $model->delete();
+        $variant = FoodVariant::findOrFail($id);
+        $variant->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Deleted successfully',
+            'message' => 'Food variant deleted successfully',
         ]);
     }
 }

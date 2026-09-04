@@ -11,58 +11,70 @@ class FoodAddonItemController extends Controller
 {
     public function index(): JsonResponse
     {
+        $items = FoodAddonItem::with('addon')->get();
+
         return response()->json([
             'success' => true,
-            'data' => FoodAddonItem::all(),
+            'data' => $items,
         ]);
     }
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'addon_id' => 'required|exists:food_addons,id',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'is_available' => 'boolean',
+        ]);
 
-        $model = FoodAddonItem::create($validated);
+        $item = FoodAddonItem::create($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Created successfully',
-            'data' => $model,
+            'message' => 'Food addon item created successfully',
+            'data' => $item->load('addon'),
         ], 201);
     }
 
     public function show(string $id): JsonResponse
     {
-        $model = FoodAddonItem::findOrFail($id);
+        $item = FoodAddonItem::with('addon')->findOrFail($id);
 
         return response()->json([
             'success' => true,
-            'data' => $model,
+            'data' => $item,
         ]);
     }
 
     public function update(Request $request, string $id): JsonResponse
     {
-        $model = FoodAddonItem::findOrFail($id);
+        $item = FoodAddonItem::findOrFail($id);
 
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'addon_id' => 'required|exists:food_addons,id',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'is_available' => 'boolean',
+        ]);
 
-        $model->update($validated);
+        $item->update($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Updated successfully',
-            'data' => $model,
+            'message' => 'Food addon item updated successfully',
+            'data' => $item->load('addon'),
         ]);
     }
 
     public function destroy(string $id): JsonResponse
     {
-        $model = FoodAddonItem::findOrFail($id);
-        $model->delete();
+        $item = FoodAddonItem::findOrFail($id);
+        $item->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Deleted successfully',
+            'message' => 'Food addon item deleted successfully',
         ]);
     }
 }
