@@ -19,7 +19,11 @@ class IngredientController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'unit' => 'required|string|max:50',
+            'reorder_level' => 'required|numeric|min:0',
+        ]);
 
         $model = Ingredient::create($validated);
 
@@ -44,7 +48,11 @@ class IngredientController extends Controller
     {
         $model = Ingredient::findOrFail($id);
 
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'unit' => 'sometimes|required|string|max:50',
+            'reorder_level' => 'sometimes|required|numeric|min:0',
+        ]);
 
         $model->update($validated);
 

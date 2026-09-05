@@ -13,26 +13,30 @@ class RecipeController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => Recipe::all(),
+            'data' => Recipe::with(['food', 'variant', 'items.ingredient'])->get(),
         ]);
     }
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'food_id' => 'required|exists:foods,id',
+            'variant_id' => 'nullable|exists:food_variants,id',
+            'instructions' => 'nullable|string',
+        ]);
 
         $model = Recipe::create($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Created successfully',
-            'data' => $model,
+            'data' => $model->load(['food', 'variant']),
         ], 201);
     }
 
     public function show(string $id): JsonResponse
     {
-        $model = Recipe::findOrFail($id);
+        $model = Recipe::with(['food', 'variant', 'items.ingredient'])->findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -44,14 +48,18 @@ class RecipeController extends Controller
     {
         $model = Recipe::findOrFail($id);
 
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'food_id' => 'sometimes|required|exists:foods,id',
+            'variant_id' => 'nullable|exists:food_variants,id',
+            'instructions' => 'nullable|string',
+        ]);
 
         $model->update($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Updated successfully',
-            'data' => $model,
+            'data' => $model->load(['food', 'variant']),
         ]);
     }
 

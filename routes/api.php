@@ -1,70 +1,89 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Food
+use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\FoodCategoryController;
 use App\Http\Controllers\Api\Menu\FoodController;
 use App\Http\Controllers\Api\Menu\FoodVariantController;
 use App\Http\Controllers\Api\Menu\FoodAddonController;
 use App\Http\Controllers\Api\Menu\FoodAddonItemController;
-
-// Customer
 use App\Http\Controllers\Api\Customer\CustomerController;
 use App\Http\Controllers\Api\Customer\CustomerAddressController;
-
-// Promotion
 use App\Http\Controllers\Api\Promotion\PromotionController;
-
-// Order
 use App\Http\Controllers\Api\Order\OrderController;
 use App\Http\Controllers\Api\Order\OrderItemController;
-
-// Restaurant
 use App\Http\Controllers\Api\Restaurant\RestaurantController;
 use App\Http\Controllers\Api\Restaurant\RestaurantBranchController;
 use App\Http\Controllers\Api\Restaurant\RestaurantTableController;
-
-// Staff
 use App\Http\Controllers\Api\Staff\StaffPositionController;
 use App\Http\Controllers\Api\Staff\EmployeeController;
 use App\Http\Controllers\Api\Staff\DeliveryDriverController;
+use App\Http\Controllers\Api\Inventory\SupplierController;
+use App\Http\Controllers\Api\Inventory\IngredientController;
+use App\Http\Controllers\Api\Inventory\InventoryController;
+use App\Http\Controllers\Api\Inventory\InventoryTransactionController;
+use App\Http\Controllers\Api\Inventory\RecipeController;
+use App\Http\Controllers\Api\Inventory\RecipeItemController;
+use App\Http\Controllers\Api\Payment\PaymentController;
+use App\Http\Controllers\Api\Order\OrderItemAddonController;
+use App\Http\Controllers\Api\Order\OrderStatusHistoryController;
+use App\Http\Controllers\Api\Order\DeliveryController;
+use App\Http\Controllers\Api\Role\RoleController;
+use App\Http\Controllers\Api\Role\UserRoleController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-*/
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    // Food
+    Route::apiResource('food-categories', FoodCategoryController::class);
+    Route::apiResource('foods', FoodController::class);
+    Route::apiResource('food-variants', FoodVariantController::class);
+    Route::apiResource('food-addons', FoodAddonController::class);
+    Route::apiResource('food-addon-items', FoodAddonItemController::class);
+
+    // Customer
+    Route::apiResource('customers', CustomerController::class);
+    Route::apiResource('customer-addresses', CustomerAddressController::class);
+
+    // Promotion
+    Route::apiResource('promotions', PromotionController::class);
+
+    // Order
+    Route::apiResource('orders', OrderController::class);
+    Route::apiResource('order-items', OrderItemController::class);
+
+    // Restaurant
+    Route::apiResource('restaurants', RestaurantController::class);
+    Route::apiResource('restaurant-branches', RestaurantBranchController::class);
+    Route::apiResource('restaurant-tables', RestaurantTableController::class);
+
+    // Staff
+    Route::apiResource('staff-positions', StaffPositionController::class);
+    Route::apiResource('employees', EmployeeController::class);
+    Route::apiResource('delivery-drivers', DeliveryDriverController::class);
+
+    // Inventory
+    Route::apiResource('suppliers', SupplierController::class);
+    Route::apiResource('ingredients', IngredientController::class);
+    Route::apiResource('inventory', InventoryController::class);
+    Route::apiResource('inventory-transactions', InventoryTransactionController::class);
+    Route::apiResource('recipes', RecipeController::class);
+    Route::apiResource('recipe-items', RecipeItemController::class);
+
+    // Payment
+    Route::apiResource('payments', PaymentController::class);
+
+    // Order extras
+    Route::apiResource('order-item-addons', OrderItemAddonController::class);
+    Route::apiResource('order-status-history', OrderStatusHistoryController::class);
+    Route::apiResource('deliveries', DeliveryController::class);
+
+    // Role
+    Route::apiResource('roles', RoleController::class);
+    Route::apiResource('user-roles', UserRoleController::class);
 });
-
-// Food
-Route::apiResource('food-categories', FoodCategoryController::class);
-Route::apiResource('foods', FoodController::class);
-Route::apiResource('food-variants', FoodVariantController::class);
-Route::apiResource('food-addons', FoodAddonController::class);
-Route::apiResource('food-addon-items', FoodAddonItemController::class);
-
-// Customer
-Route::apiResource('customers', CustomerController::class);
-Route::apiResource('customer-addresses', CustomerAddressController::class);
-
-// Promotion
-Route::apiResource('promotions', PromotionController::class);
-
-// Order
-Route::apiResource('orders', OrderController::class);
-Route::apiResource('order-items', OrderItemController::class);
-
-// Restaurant
-Route::apiResource('restaurants', RestaurantController::class);
-Route::apiResource('restaurant-branches', RestaurantBranchController::class);
-Route::apiResource('restaurant-tables', RestaurantTableController::class);
-
-// Staff
-Route::apiResource('staff-positions', StaffPositionController::class);
-Route::apiResource('employees', EmployeeController::class);
-Route::apiResource('delivery-drivers', DeliveryDriverController::class);

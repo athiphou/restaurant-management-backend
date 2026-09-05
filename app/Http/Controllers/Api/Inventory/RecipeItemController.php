@@ -13,26 +13,30 @@ class RecipeItemController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => RecipeItem::all(),
+            'data' => RecipeItem::with(['recipe', 'ingredient'])->get(),
         ]);
     }
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'recipe_id' => 'required|exists:recipes,id',
+            'ingredient_id' => 'required|exists:ingredients,id',
+            'quantity_required' => 'required|numeric|min:0',
+        ]);
 
         $model = RecipeItem::create($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Created successfully',
-            'data' => $model,
+            'data' => $model->load(['recipe', 'ingredient']),
         ], 201);
     }
 
     public function show(string $id): JsonResponse
     {
-        $model = RecipeItem::findOrFail($id);
+        $model = RecipeItem::with(['recipe', 'ingredient'])->findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -44,14 +48,18 @@ class RecipeItemController extends Controller
     {
         $model = RecipeItem::findOrFail($id);
 
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'recipe_id' => 'sometimes|required|exists:recipes,id',
+            'ingredient_id' => 'sometimes|required|exists:ingredients,id',
+            'quantity_required' => 'sometimes|required|numeric|min:0',
+        ]);
 
         $model->update($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Updated successfully',
-            'data' => $model,
+            'data' => $model->load(['recipe', 'ingredient']),
         ]);
     }
 
