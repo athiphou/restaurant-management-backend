@@ -58,7 +58,11 @@ class RestaurantTableController extends Controller
 
         $table->update($validated);
 
-        return response()->json($table);
+        return response()->json([
+            'success' => true,
+            'message' => 'Updated successfully',
+            'data' => $table,
+        ]);
     }
 
     public function destroy(string $id): JsonResponse

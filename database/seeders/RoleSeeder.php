@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,7 +13,6 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        //
         Role::insert([
             ['name' => 'Admin', 'description' => 'System Administrator'],
             ['name' => 'Manager', 'description' => 'Branch Manager'],

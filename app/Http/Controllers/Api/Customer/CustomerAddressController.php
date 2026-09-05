@@ -56,9 +56,9 @@ class CustomerAddressController extends Controller
         $address = CustomerAddress::findOrFail($id);
 
         $validated = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
+            'customer_id' => 'sometimes|required|exists:customers,id',
             'label' => 'nullable|string|max:100',
-            'address' => 'required|string',
+            'address' => 'sometimes|required|string',
             'city' => 'nullable|string|max:100',
             'phone' => 'nullable|string|max:20',
             'latitude' => 'nullable|numeric|between:-90,90',

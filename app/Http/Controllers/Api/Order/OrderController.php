@@ -82,23 +82,23 @@ public function update(Request $request, string $id): JsonResponse
     $order = Order::findOrFail($id);
 
     $validated = $request->validate([
-        'branch_id' => 'required|exists:restaurant_branches,id',
+        'branch_id' => 'sometimes|required|exists:restaurant_branches,id',
         'table_id' => 'nullable|exists:restaurant_tables,id',
         'customer_id' => 'nullable|exists:customers,id',
         'promotion_id' => 'nullable|exists:promotions,id',
 
-        'order_number' => 'required|string|max:50|unique:orders,order_number,' . $id,
+        'order_number' => 'sometimes|required|string|max:50|unique:orders,order_number,' . $id,
 
-        'order_type' => 'required|in:dine_in,takeaway,delivery',
+        'order_type' => 'sometimes|required|in:dine_in,takeaway,delivery',
 
-        'status' => 'required|in:pending,confirmed,preparing,ready,out_for_delivery,completed,cancelled',
+        'status' => 'sometimes|required|in:pending,confirmed,preparing,ready,out_for_delivery,completed,cancelled',
 
-        'subtotal' => 'required|numeric|min:0',
+        'subtotal' => 'sometimes|required|numeric|min:0',
         'discount' => 'nullable|numeric|min:0',
         'tax' => 'nullable|numeric|min:0',
         'service_charge' => 'nullable|numeric|min:0',
         'delivery_fee' => 'nullable|numeric|min:0',
-        'grand_total' => 'required|numeric|min:0',
+        'grand_total' => 'sometimes|required|numeric|min:0',
 
         'notes' => 'nullable|string',
     ]);

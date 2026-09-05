@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('staff_positions', function (Blueprint $table) {
-            $table->string('title')->nullable();
-            $table->decimal('base_salary', 10, 2)->nullable();
+            if (! Schema::hasColumn('staff_positions', 'title')) {
+                $table->string('title')->nullable();
+            }
+            if (! Schema::hasColumn('staff_positions', 'base_salary')) {
+                $table->decimal('base_salary', 10, 2)->nullable();
+            }
         });
     }
 

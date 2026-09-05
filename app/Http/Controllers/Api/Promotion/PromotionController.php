@@ -57,14 +57,14 @@ class PromotionController extends Controller
         $promotion = Promotion::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:promotions,code,' . $id,
+            'name' => 'sometimes|required|string|max:255',
+            'code' => 'sometimes|required|string|max:50|unique:promotions,code,' . $id,
             'description' => 'nullable|string',
-            'discount_type' => 'required|in:percentage,fixed',
-            'discount_value' => 'required|numeric|min:0',
+            'discount_type' => 'sometimes|required|in:percentage,fixed',
+            'discount_value' => 'sometimes|required|numeric|min:0',
             'min_order_amount' => 'nullable|numeric|min:0',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'start_date' => 'sometimes|required|date',
+            'end_date' => 'sometimes|required|date|after_or_equal:start_date',
             'is_active' => 'boolean',
         ]);
 

@@ -13,26 +13,30 @@ class OrderItemAddonController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => OrderItemAddon::all(),
+            'data' => OrderItemAddon::with(['orderItem', 'addonItem'])->get(),
         ]);
     }
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'order_item_id' => 'required|exists:order_items,id',
+            'addon_item_id' => 'required|exists:food_addon_items,id',
+            'price' => 'required|numeric|min:0',
+        ]);
 
         $model = OrderItemAddon::create($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Created successfully',
-            'data' => $model,
+            'data' => $model->load(['orderItem', 'addonItem']),
         ], 201);
     }
 
     public function show(string $id): JsonResponse
     {
-        $model = OrderItemAddon::findOrFail($id);
+        $model = OrderItemAddon::with(['orderItem', 'addonItem'])->findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -44,14 +48,18 @@ class OrderItemAddonController extends Controller
     {
         $model = OrderItemAddon::findOrFail($id);
 
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'order_item_id' => 'sometimes|required|exists:order_items,id',
+            'addon_item_id' => 'sometimes|required|exists:food_addon_items,id',
+            'price' => 'sometimes|required|numeric|min:0',
+        ]);
 
         $model->update($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Updated successfully',
-            'data' => $model,
+            'data' => $model->load(['orderItem', 'addonItem']),
         ]);
     }
 

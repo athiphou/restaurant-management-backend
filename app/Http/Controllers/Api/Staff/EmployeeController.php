@@ -28,7 +28,11 @@ class EmployeeController extends Controller
         ]);
         $employee = Employee::create($validated);
 
-        return response()->json($employee->load(['user', 'branch', 'position']), 201);
+        return response()->json([
+            'success' => true,
+            'message' => 'Created successfully',
+            'data' => $employee->load(['user', 'branch', 'position']),
+        ], 201);
     }
 
     public function show(string $id): JsonResponse
@@ -45,14 +49,20 @@ class EmployeeController extends Controller
     {
         $model = Employee::findOrFail($id);
 
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'user_id' => 'sometimes|exists:users,id',
+            'branch_id' => 'sometimes|exists:restaurant_branches,id',
+            'position_id' => 'sometimes|exists:staff_positions,id',
+            'hire_date' => 'sometimes|date',
+            'salary' => 'sometimes|numeric|min:0',
+        ]);
 
         $model->update($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Updated successfully',
-            'data' => $model,
+            'data' => $model->load(['user', 'branch', 'position']),
         ]);
     }
 

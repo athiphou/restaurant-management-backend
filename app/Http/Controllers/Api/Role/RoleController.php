@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RoleController extends Controller
 {
@@ -13,13 +14,16 @@ class RoleController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => Role::all(),
+            'data' => Role::withCount('users')->get(),
         ]);
     }
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:roles,name',
+            'description' => 'nullable|string|max:1000',
+        ]);
 
         $model = Role::create($validated);
 
@@ -32,7 +36,7 @@ class RoleController extends Controller
 
     public function show(string $id): JsonResponse
     {
-        $model = Role::findOrFail($id);
+        $model = Role::with('users')->findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -44,7 +48,10 @@ class RoleController extends Controller
     {
         $model = Role::findOrFail($id);
 
-        $validated = $request->validate([]);
+        $validated = $request->validate([
+            'name' => ['sometimes', 'required', 'string', 'max:255', Rule::unique('roles', 'name')->ignore($model->id)],
+            'description' => 'nullable|string|max:1000',
+        ]);
 
         $model->update($validated);
 

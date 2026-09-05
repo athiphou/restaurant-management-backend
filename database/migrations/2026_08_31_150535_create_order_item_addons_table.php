@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('order_item_addons', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('order_item_id')->constrained('order_items')->cascadeOnDelete();
+            $table->foreignId('addon_item_id')->constrained('food_addon_items')->restrictOnDelete();
+            $table->decimal('price', 10, 2)->default(0);
             $table->timestamps();
         });
     }

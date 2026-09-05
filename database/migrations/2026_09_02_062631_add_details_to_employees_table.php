@@ -12,11 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('employees', function (Blueprint $table) {
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->foreignId('branch_id')->nullable()->constrained('restaurant_branches')->onDelete('cascade');
-            $table->foreignId('position_id')->nullable()->constrained('staff_positions')->onDelete('restrict');
-            $table->date('hire_date')->nullable();
-            $table->decimal('salary', 10, 2)->nullable();
+            if (! Schema::hasColumn('employees', 'user_id')) {
+                $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            }
+            if (! Schema::hasColumn('employees', 'branch_id')) {
+                $table->foreignId('branch_id')->nullable()->constrained('restaurant_branches')->onDelete('cascade');
+            }
+            if (! Schema::hasColumn('employees', 'position_id')) {
+                $table->foreignId('position_id')->nullable()->constrained('staff_positions')->onDelete('restrict');
+            }
+            if (! Schema::hasColumn('employees', 'hire_date')) {
+                $table->date('hire_date')->nullable();
+            }
+            if (! Schema::hasColumn('employees', 'salary')) {
+                $table->decimal('salary', 10, 2)->nullable();
+            }
         });
     }
 

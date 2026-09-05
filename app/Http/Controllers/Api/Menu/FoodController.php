@@ -54,10 +54,10 @@ class FoodController extends Controller
         $food = Food::findOrFail($id);
 
         $validated = $request->validate([
-            'category_id' => 'required|exists:food_categories,id',
-            'name' => 'required|string|max:255',
+            'category_id' => 'sometimes|required|exists:food_categories,id',
+            'name' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
+            'price' => 'sometimes|required|numeric|min:0',
             'image' => 'nullable|string|max:500',
             'is_available' => 'boolean',
         ]);

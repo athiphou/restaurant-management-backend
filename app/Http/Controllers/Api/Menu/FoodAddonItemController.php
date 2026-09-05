@@ -52,9 +52,9 @@ class FoodAddonItemController extends Controller
         $item = FoodAddonItem::findOrFail($id);
 
         $validated = $request->validate([
-            'addon_id' => 'required|exists:food_addons,id',
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
+            'addon_id' => 'sometimes|required|exists:food_addons,id',
+            'name' => 'sometimes|required|string|max:255',
+            'price' => 'sometimes|required|numeric|min:0',
             'is_available' => 'boolean',
         ]);
 

@@ -57,7 +57,11 @@ class RestaurantBranchController extends Controller
 
         $branch->update($validated);
 
-        return response()->json($branch);
+        return response()->json([
+            'success' => true,
+            'message' => 'Updated successfully',
+            'data' => $branch,
+        ]);
     }
 
     public function destroy(string $id): JsonResponse

@@ -52,9 +52,9 @@ class FoodVariantController extends Controller
         $variant = FoodVariant::findOrFail($id);
 
         $validated = $request->validate([
-            'food_id' => 'required|exists:foods,id',
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
+            'food_id' => 'sometimes|required|exists:foods,id',
+            'name' => 'sometimes|required|string|max:255',
+            'price' => 'sometimes|required|numeric|min:0',
             'is_available' => 'boolean',
         ]);
 

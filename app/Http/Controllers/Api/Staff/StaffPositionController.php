@@ -25,7 +25,11 @@ class StaffPositionController extends Controller
         ]);
         $position = StaffPosition::create($validated);
 
-        return response()->json($position, 201);
+        return response()->json([
+            'success' => true,
+            'message' => 'Created successfully',
+            'data' => $position,
+        ], 201);
 
     }
 
@@ -50,7 +54,11 @@ class StaffPositionController extends Controller
 
         $staffPosition->update($validated);
 
-        return response()->json($staffPosition);
+        return response()->json([
+            'success' => true,
+            'message' => 'Updated successfully',
+            'data' => $staffPosition,
+        ]);
     }
 
     public function destroy(string $id): JsonResponse

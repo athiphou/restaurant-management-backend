@@ -67,12 +67,12 @@ class OrderItemController extends Controller
         $item = OrderItem::findOrFail($id);
 
         $validated = $request->validate([
-            'order_id' => 'required|exists:orders,id',
-            'food_id' => 'required|exists:foods,id',
+            'order_id' => 'sometimes|required|exists:orders,id',
+            'food_id' => 'sometimes|required|exists:foods,id',
             'variant_id' => 'nullable|exists:food_variants,id',
-            'quantity' => 'required|integer|min:1',
-            'unit_price' => 'required|numeric|min:0',
-            'subtotal' => 'required|numeric|min:0',
+            'quantity' => 'sometimes|required|integer|min:1',
+            'unit_price' => 'sometimes|required|numeric|min:0',
+            'subtotal' => 'sometimes|required|numeric|min:0',
             'notes' => 'nullable|string',
         ]);
 
