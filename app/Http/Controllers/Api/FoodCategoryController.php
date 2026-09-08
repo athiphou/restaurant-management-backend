@@ -48,6 +48,34 @@ class FoodCategoryController extends Controller
         ]);
     }
 
+    public function foods(string $id): JsonResponse
+    {
+        $category = FoodCategory::findOrFail($id);
+
+        $foods = $category->foods()
+            ->with(['variants', 'addons.items'])
+            ->orderBy('name')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $foods,
+        ]);
+    }
+
+    public function toggleActive(string $id): JsonResponse
+    {
+        $category = FoodCategory::findOrFail($id);
+        $category->is_active = !$category->is_active;
+        $category->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => $category->is_active ? 'Category activated' : 'Category hidden',
+            'data' => $category,
+        ]);
+    }
+
     public function update(Request $request, string $id): JsonResponse
     {
         $category = FoodCategory::findOrFail($id);

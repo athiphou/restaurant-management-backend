@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Menu;
 
 use App\Http\Controllers\Controller;
 use App\Models\Food;
+use App\Models\FoodCategory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -41,11 +42,70 @@ class FoodController extends Controller
 
     public function show(string $id): JsonResponse
     {
-        $food = Food::with('category')->findOrFail($id);
+        $food = Food::with(['category', 'variants', 'addons.items'])->findOrFail($id);
 
         return response()->json([
             'success' => true,
             'data' => $food,
+        ]);
+    }
+
+    public function full(string $id): JsonResponse
+    {
+        $food = Food::with(['category', 'variants', 'addons.items'])->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $food,
+        ]);
+    }
+
+    public function variants(string $id): JsonResponse
+    {
+        $food = Food::findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $food->variants()->orderBy('name')->get(),
+        ]);
+    }
+
+    public function addons(string $id): JsonResponse
+    {
+        $food = Food::with(['addons.items'])->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $food->addons,
+        ]);
+    }
+
+    public function toggleAvailability(string $id): JsonResponse
+    {
+        $food = Food::findOrFail($id);
+        $food->is_available = !$food->is_available;
+        $food->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => $food->is_available ? 'Food is now available' : 'Food is now unavailable',
+            'data' => $food->load('category'),
+        ]);
+    }
+
+    public function tree(): JsonResponse
+    {
+        $categories = FoodCategory::orderBy('sort_order')
+            ->with([
+                'foods' => function ($query) {
+                    $query->with(['variants', 'addons.items'])->orderBy('name');
+                },
+            ])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $categories,
         ]);
     }
 

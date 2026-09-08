@@ -40,11 +40,34 @@ class FoodAddonController extends Controller
 
     public function show(string $id): JsonResponse
     {
-        $addon = FoodAddon::with('food')->findOrFail($id);
+        $addon = FoodAddon::with(['food', 'items'])->findOrFail($id);
 
         return response()->json([
             'success' => true,
             'data' => $addon,
+        ]);
+    }
+
+    public function items(string $id): JsonResponse
+    {
+        $addon = FoodAddon::with('items')->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $addon->items,
+        ]);
+    }
+
+    public function toggleAvailability(string $id): JsonResponse
+    {
+        $addon = FoodAddon::findOrFail($id);
+        $addon->is_available = !$addon->is_available;
+        $addon->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => $addon->is_available ? 'Add-on is now available' : 'Add-on is now unavailable',
+            'data' => $addon->load('food'),
         ]);
     }
 

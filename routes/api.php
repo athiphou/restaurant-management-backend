@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Auth\GoogleAuthController;
 use App\Http\Controllers\Api\FoodCategoryController;
 use App\Http\Controllers\Api\Menu\FoodController;
 use App\Http\Controllers\Api\Menu\FoodVariantController;
@@ -35,11 +36,27 @@ use App\Http\Controllers\Api\Role\UserRoleController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login/otp', [AuthController::class, 'sendOtp']);
+Route::post('/login/otp/resend', [AuthController::class, 'resendOtp']);
+Route::post('/login/verify', [AuthController::class, 'verifyOtp']);
+Route::post('/auth/google', [GoogleAuthController::class, 'signIn']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
     // Food
+    Route::get('menu/tree', [FoodController::class, 'tree']);
+    Route::get('foods/{food}/full', [FoodController::class, 'full']);
+    Route::get('foods/{food}/variants', [FoodController::class, 'variants']);
+    Route::get('foods/{food}/addons', [FoodController::class, 'addons']);
+    Route::patch('foods/{food}/toggle-availability', [FoodController::class, 'toggleAvailability']);
+    Route::get('food-categories/{category}/foods', [FoodCategoryController::class, 'foods']);
+    Route::patch('food-categories/{category}/toggle-active', [FoodCategoryController::class, 'toggleActive']);
+    Route::patch('food-variants/{food_variant}/toggle-availability', [FoodVariantController::class, 'toggleAvailability']);
+    Route::get('food-addons/{food_addon}/items', [FoodAddonController::class, 'items']);
+    Route::patch('food-addons/{food_addon}/toggle-availability', [FoodAddonController::class, 'toggleAvailability']);
+    Route::patch('food-addon-items/{food_addon_item}/toggle-availability', [FoodAddonItemController::class, 'toggleAvailability']);
+
     Route::apiResource('food-categories', FoodCategoryController::class);
     Route::apiResource('foods', FoodController::class);
     Route::apiResource('food-variants', FoodVariantController::class);

@@ -47,6 +47,19 @@ class FoodAddonItemController extends Controller
         ]);
     }
 
+    public function toggleAvailability(string $id): JsonResponse
+    {
+        $item = FoodAddonItem::findOrFail($id);
+        $item->is_available = !$item->is_available;
+        $item->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => $item->is_available ? 'Add-on item is now available' : 'Add-on item is now unavailable',
+            'data' => $item->load('addon'),
+        ]);
+    }
+
     public function update(Request $request, string $id): JsonResponse
     {
         $item = FoodAddonItem::findOrFail($id);

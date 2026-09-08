@@ -47,6 +47,19 @@ class FoodVariantController extends Controller
         ]);
     }
 
+    public function toggleAvailability(string $id): JsonResponse
+    {
+        $variant = FoodVariant::findOrFail($id);
+        $variant->is_available = !$variant->is_available;
+        $variant->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => $variant->is_available ? 'Variant is now available' : 'Variant is now unavailable',
+            'data' => $variant->load('food'),
+        ]);
+    }
+
     public function update(Request $request, string $id): JsonResponse
     {
         $variant = FoodVariant::findOrFail($id);
