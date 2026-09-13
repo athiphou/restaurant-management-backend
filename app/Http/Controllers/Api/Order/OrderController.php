@@ -9,14 +9,26 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index(): JsonResponse
+    protected function withRelations(): array
     {
-        $orders = Order::with([
+        return [
             'branch',
             'table',
             'customer',
             'promotion',
-        ])->get();
+            'items.food',
+            'items.variant',
+            'items.addons.addonItem',
+            'statusHistory',
+            'payments',
+            'delivery.deliveryDriver',
+            'delivery.customerAddress',
+        ];
+    }
+
+    public function index(): JsonResponse
+    {
+        $orders = Order::with($this->withRelations())->get();
 
         return response()->json([
             'success' => true,
@@ -53,23 +65,13 @@ class OrderController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Order created successfully',
-            'data' => $order->load([
-                'branch',
-                'table',
-                'customer',
-                'promotion',
-            ]),
+            'data' => $order->load($this->withRelations()),
         ], 201);
     }
 
     public function show(string $id): JsonResponse
     {
-        $order = Order::with([
-            'branch',
-            'table',
-            'customer',
-            'promotion',
-        ])->findOrFail($id);
+        $order = Order::with($this->withRelations())->findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -108,12 +110,7 @@ public function update(Request $request, string $id): JsonResponse
     return response()->json([
         'success' => true,
         'message' => 'Order updated successfully',
-        'data' => $order->load([
-            'branch',
-            'table',
-            'customer',
-            'promotion',
-        ]),
+        'data' => $order->load($this->withRelations()),
     ]);
 }
 

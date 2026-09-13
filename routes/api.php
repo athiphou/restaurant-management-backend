@@ -32,6 +32,7 @@ use App\Http\Controllers\Api\Order\OrderStatusHistoryController;
 use App\Http\Controllers\Api\Order\DeliveryController;
 use App\Http\Controllers\Api\Role\RoleController;
 use App\Http\Controllers\Api\Role\UserRoleController;
+use App\Http\Controllers\Api\DashboardController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -41,24 +42,35 @@ Route::post('/login/otp/resend', [AuthController::class, 'resendOtp']);
 Route::post('/login/verify', [AuthController::class, 'verifyOtp']);
 Route::post('/auth/google', [GoogleAuthController::class, 'signIn']);
 
+// Public read-only endpoints (browsing menu & locations without login)
+Route::get('menu/tree', [FoodController::class, 'tree']);
+Route::get('foods', [FoodController::class, 'index']);
+Route::get('foods/{food}/full', [FoodController::class, 'full']);
+Route::get('foods/{food}/variants', [FoodController::class, 'variants']);
+Route::get('foods/{food}/addons', [FoodController::class, 'addons']);
+Route::get('foods/{food}', [FoodController::class, 'show']);
+Route::get('food-categories', [FoodCategoryController::class, 'index']);
+Route::get('food-categories/{category}/foods', [FoodCategoryController::class, 'foods']);
+Route::get('food-categories/{category}', [FoodCategoryController::class, 'show']);
+Route::get('restaurants', [RestaurantController::class, 'index']);
+Route::get('restaurants/{restaurant}', [RestaurantController::class, 'show']);
+Route::get('restaurant-branches', [RestaurantBranchController::class, 'index']);
+Route::get('restaurant-branches/{branch}', [RestaurantBranchController::class, 'show']);
+Route::get('promotions', [PromotionController::class, 'index']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
     // Food
-    Route::get('menu/tree', [FoodController::class, 'tree']);
-    Route::get('foods/{food}/full', [FoodController::class, 'full']);
-    Route::get('foods/{food}/variants', [FoodController::class, 'variants']);
-    Route::get('foods/{food}/addons', [FoodController::class, 'addons']);
     Route::patch('foods/{food}/toggle-availability', [FoodController::class, 'toggleAvailability']);
-    Route::get('food-categories/{category}/foods', [FoodCategoryController::class, 'foods']);
     Route::patch('food-categories/{category}/toggle-active', [FoodCategoryController::class, 'toggleActive']);
     Route::patch('food-variants/{food_variant}/toggle-availability', [FoodVariantController::class, 'toggleAvailability']);
     Route::get('food-addons/{food_addon}/items', [FoodAddonController::class, 'items']);
     Route::patch('food-addons/{food_addon}/toggle-availability', [FoodAddonController::class, 'toggleAvailability']);
     Route::patch('food-addon-items/{food_addon_item}/toggle-availability', [FoodAddonItemController::class, 'toggleAvailability']);
 
-    Route::apiResource('food-categories', FoodCategoryController::class);
-    Route::apiResource('foods', FoodController::class);
+    Route::apiResource('food-categories', FoodCategoryController::class)->except(['index', 'show']);
+    Route::apiResource('foods', FoodController::class)->except(['index', 'show']);
     Route::apiResource('food-variants', FoodVariantController::class);
     Route::apiResource('food-addons', FoodAddonController::class);
     Route::apiResource('food-addon-items', FoodAddonItemController::class);
@@ -68,15 +80,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('customer-addresses', CustomerAddressController::class);
 
     // Promotion
-    Route::apiResource('promotions', PromotionController::class);
+    Route::apiResource('promotions', PromotionController::class)->except(['index']);
 
     // Order
     Route::apiResource('orders', OrderController::class);
     Route::apiResource('order-items', OrderItemController::class);
 
     // Restaurant
-    Route::apiResource('restaurants', RestaurantController::class);
-    Route::apiResource('restaurant-branches', RestaurantBranchController::class);
+    Route::apiResource('restaurants', RestaurantController::class)->except(['index', 'show']);
+    Route::apiResource('restaurant-branches', RestaurantBranchController::class)->except(['index', 'show']);
     Route::apiResource('restaurant-tables', RestaurantTableController::class);
 
     // Staff
@@ -103,4 +115,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // Role
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('user-roles', UserRoleController::class);
+
+    // Dashboard
+    Route::get('dashboard/overview', [DashboardController::class, 'overview']);
+    Route::get('dashboard/revenue', [DashboardController::class, 'revenue']);
+    Route::get('dashboard/orders', [DashboardController::class, 'orders']);
+    Route::get('dashboard/top-foods', [DashboardController::class, 'topFoods']);
+    Route::get('dashboard/recent-orders', [DashboardController::class, 'recentOrders']);
+    Route::get('dashboard/recent-customers', [DashboardController::class, 'recentCustomers']);
+    Route::get('dashboard/inventory', [DashboardController::class, 'inventory']);
+    Route::get('dashboard/payments', [DashboardController::class, 'payments']);
 });

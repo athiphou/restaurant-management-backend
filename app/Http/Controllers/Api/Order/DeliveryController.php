@@ -9,11 +9,22 @@ use Illuminate\Http\Request;
 
 class DeliveryController extends Controller
 {
+    protected function withRelations(): array
+    {
+        return [
+            'order.branch',
+            'order.customer',
+            'order.items.food',
+            'deliveryDriver.user',
+            'customerAddress',
+        ];
+    }
+
     public function index(): JsonResponse
     {
         return response()->json([
             'success' => true,
-            'data' => Delivery::with(['order', 'deliveryDriver', 'customerAddress'])->get(),
+            'data' => Delivery::with($this->withRelations())->get(),
         ]);
     }
 
@@ -33,13 +44,13 @@ class DeliveryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Created successfully',
-            'data' => $model->load(['order', 'deliveryDriver', 'customerAddress']),
+            'data' => $model->load($this->withRelations()),
         ], 201);
     }
 
     public function show(string $id): JsonResponse
     {
-        $model = Delivery::with(['order', 'deliveryDriver', 'customerAddress'])->findOrFail($id);
+        $model = Delivery::with($this->withRelations())->findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -65,7 +76,7 @@ class DeliveryController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Updated successfully',
-            'data' => $model->load(['order', 'deliveryDriver', 'customerAddress']),
+            'data' => $model->load($this->withRelations()),
         ]);
     }
 
